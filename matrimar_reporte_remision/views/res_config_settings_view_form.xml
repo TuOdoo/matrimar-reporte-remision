@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+
+        <record id="res_config_settings_view_matrimar_remision"
+            model="ir.ui.view">
+            <field name="name">matrimar_settings_remision</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id"
+                ref="stock.res_config_settings_view_form" />
+            <field name="arch"
+                type="xml">
+
+                <xpath expr="//div[@id='res_partner_id']"
+                    position="after">
+
+                    <h2>Reporte de remision</h2>
+                    <div class="row mt16 o_settings_container"
+                        name="resparner_setting_container">
+                        <div class="col-12 o_setting_box"
+                            id="res_partner_settings_correos_remision"
+                            title="Correos directiva">
+                            <div class="o_setting_right_pane">
+                                <label for="res_partner_remision" />
+                                <field name="res_partner_remision">
+
+                                    <tree string="" editable="bottom">
+                                        <field name="parner_id" />
+                                        <field name="email" />
+                                        <field name="customer_id"/>
+                                    </tree>
+
+                                </field>
+                                <div class="text-muted">
+                                        Correos a los que se enviará el reporte de remision
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

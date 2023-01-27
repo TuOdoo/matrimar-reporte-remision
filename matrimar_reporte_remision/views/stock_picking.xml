@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data >
+        <record id="stock_picking_view_tree_sum"
+            model="ir.ui.view">
+            <field name="name">stock_picking_view_tree_sum</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="matrimar_external_dbsource.stock_picking_view_tuodoo_tree" />
+            <field name="arch"
+                type="xml">
+                <xpath expr="//field[@name='qty_done_rr']"
+                    position="replace">
+                    <field name="qty_done_rr" sum="Total"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="stock_picking_action_server_send"
+            model="ir.actions.server">
+            <field name="name">Enviar por correo</field>
+            <field name="model_id"
+                ref="model_stock_picking" />
+            <field name="binding_model_id"
+                ref="model_stock_picking" />
+            <field name="state">code</field>
+            <field name="code">action=record.open_wizard()</field>
+        </record>
+    </data>
+</odoo>

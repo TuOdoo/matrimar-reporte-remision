@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_reporte_remisiones_mult" model="ir.actions.report">
+        <field name="name">Reporte remisiones</field>
+        <field name="model">stock.picking</field>
+        <field name="binding_model_id"
+            ref="model_stock_picking" />
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">matrimar_reporte_remision.reporte_remisiones_mult</field>
+        <field name="report_file">matrimar_reporte_remision.reporte_remisiones_mult</field>
+        <field name="print_report_name">'%s' % 'Reporte remisiones'</field>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="reporte_remisiones_mult"
+        name="reporte_remisiones_mult">
+
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2>Remisiones</h2>
+                    <t t-set="qty_done_rr" t-value="0"/>
+                    <t t-set="delivery_amount" t-value="0"/>
+
+                    <table class="table table-sm table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th >Referencia</th>
+                                <th >Fecha ticket apex</th>
+                                <th >Tiro</th>
+                                <th >Pedido</th>
+                                <th >Producto</th>
+                                <th >Cantidad</th>
+                                <!-- <th >Delivery Amount</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="docs"
+                                t-as="vals">
+                                <tr>
+                                    <th t-esc="vals.name"></th>
+                                    <th t-esc="vals.ticket_date if vals.ticket_date else '' "></th>
+                                    <th t-esc="vals.partner_id.name"></th>
+                                    <th t-esc="vals.origin"></th>
+                                    <th t-esc="vals.product_id"></th>
+                                    <th t-esc="'{0:,.2f}'.format(vals.qty_done_rr)"></th>
+                                    <!-- <th t-esc="'{0:,.2f}'.format(vals.qty_done_rr)"></th> -->
+                                </tr>
+                                <t t-set="qty_done_rr" t-value="qty_done_rr + vals.qty_done_rr"/>
+                                <t t-set="delivery_amount" t-value="delivery_amount + vals.delivery_amount"/>
+                            </t>
+                            <t t-if="not docs">                                
+                                <t t-foreach="form['docs']"
+                                    t-as="vals">
+                                    <tr>
+                                        <th t-esc="vals.name"></th>
+                                        <th t-esc="vals.ticket_date if vals.ticket_date else '' "></th>
+                                        <th t-esc="vals.partner_id.name"></th>
+                                        <th t-esc="vals.origin"></th>
+                                        <th t-esc="vals.product_id"></th>
+                                        <th t-esc="'{0:,.2f}'.format(vals.qty_done_rr)"></th>
+                                        <!-- <th t-esc="'{0:,.2f}'.format(vals.qty_done_rr)"></th> -->
+                                    </tr>
+                                    <t t-set="qty_done_rr" t-value="qty_done_rr + vals.qty_done_rr"/>
+                                    <t t-set="delivery_amount" t-value="delivery_amount + vals.delivery_amount"/>
+                                </t>
+                            </t>
+                        </tbody>
+                    </table>
+                    <div class="pull-right" name="so_total_summary">
+                        <div id="total" class="row" name="total">
+                            <div t-attf-class="'col-sm-7 col-md-6' ml-auto">
+                                <table class="table table-sm">
+                                    <tr class="border-black o_subtotal" style="">
+                                        <td name="td_amount_untaxed_label"><strong>Cantidad</strong></td>
+                                        <td name="td_amount_untaxed" class="text-right">
+                                            <t t-esc="'{0:,.2f}'.format(qty_done_rr)" />
+                                        </td>
+                                    </tr>
+                                    <!-- <tr class="border-black o_subtotal" style="">
+                                        <td name="td_amount_untaxed_label"><strong>Total</strong></td>
+                                        <td name="td_amount_untaxed" class="text-right">
+                                            <t t-esc="'{0:,.2f}'.format(delivery_amount)" />
+                                        </td>
+                                    </tr> -->
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

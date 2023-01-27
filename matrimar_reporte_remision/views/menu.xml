@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+
+    <record id="action_reporte_remisiones"
+        model="ir.actions.act_window">
+        <field name="name">Reporte remision</field>
+        <field name="res_model">wizard.stock.picking</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="reporte_remisiones"
+        name="Reporte remision"
+        parent="sale.menu_sale_report"
+        action="action_reporte_remisiones"
+        sequence="10" />
+
+   
+</odoo>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data >
+
+
+        <record model="ir.ui.view" id="request_res_partner_remision_tree_view">
+            <field name="name">request_res_partner_remision_tree_view</field>
+            <field name="model">res.partner.remision</field>
+            <field name="arch" type="xml">
+                <tree string="Status">
+                    <field name="parner_id" /> 
+                    <field name="email"/>
+                    <field name="customer_id" />                   
+                </tree>
+            </field>
+        </record>
+
+        <record id="res_company_form_inherits_remision" model="ir.ui.view">
+            <field name="name">res.company.form.inherits.remision</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form" />
+            <field name="arch"
+                type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Reporte remision" name="report_remision">
+                        <field name="res_partner_remision">
+                            <tree editable="bottom">
+                                <field name="parner_id" />
+                                <field name="email" />
+                                <field name="customer_id"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

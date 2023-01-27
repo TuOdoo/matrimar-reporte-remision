@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data >
+        <record id="done_stock_picking" model="mail.template">
+            <field name="name">Enviar reporte remisiones </field>
+            <field name="model_id" ref="matrimar_reporte_remision.model_stock_picking"/>
+            <field name="subject">Enviar reporte remisiones</field>
+            <field name="email_from"></field>
+            <field name="email_to"></field>
+            <!-- <field name="report_template" ref="matrimar_reporte_remision.action_report_reporte_remisiones_mult"/> -->
+            <field name="body_html" type="html">
+                <table border="0" cellpadding="0" cellspacing="0" width="590" style="min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;">
+                    <tr><td valign="top" style="font-size: 13px;">
+                        <div>
+                            Reporte remisiones
+                        </div>
+                    </td></tr>
+                </table>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="email_compose_message_wizard_form_remision">
+            <field name="name">mail.compose.message.form</field>
+            <field name="model">mail.compose.message</field>
+            <field name="groups_id" eval="[(4,ref('base.group_user'))]"/>
+            <field name="arch" type="xml">
+                <form string="Compose Email">
+                    <group>
+                        <!-- truly invisible fields for control and options -->
+                        <field name="composition_mode" invisible="1"/>
+                        <field name="model" invisible="1"/>
+                        <field name="res_id" invisible="1"/>
+                        <field name="is_log" invisible="1"/>
+                        <field name="parent_id" invisible="1"/>
+                        <field name="mail_server_id" invisible="1"/>
+                        <field name="active_domain" invisible="1"/>
+
+                        <!-- Various warnings -->
+                        <div colspan="2" class="oe_form_box_info bg-info oe_text_center"
+                                attrs="{'invisible': [('active_domain', '=', False)]}">
+                            <p attrs="{'invisible': [('use_active_domain', '=', False)]}">
+                                <strong>
+                                    Todos los registros que coincidan con su filtro de búsqueda actual se enviarán por correo, no solo los ID seleccionados en la vista de lista.
+                                </strong><br />
+                                El correo electrónico se enviará para todos los registros seleccionados en la lista.<br /> La confirmación de este asistente probablemente llevará unos minutos bloqueando su navegador.
+                            </p>
+                            <p attrs="{'invisible': [('use_active_domain', '=', True)]}">
+                                <strong>Solo se utilizarán los registros marcados en la vista de lista.</strong><br />
+                                El correo electrónico se enviará para todos los registros seleccionados en la lista.
+                            </p>
+                            <p class="mt8">
+                                <span attrs="{'invisible': [('use_active_domain', '=', True)]}">
+                                    Si desea enviarlo para todos los registros que coincidan con su criterio de búsqueda, marque esta casilla:
+                                </span>
+                                <span attrs="{'invisible': [('use_active_domain', '=', False)]}">
+                                    Si desea utilizar solo los registros seleccionados, desmarque esta casilla de selección:
+                                </span>
+                                <field class="oe_inline" name="use_active_domain"/>
+                            </p>
+                        </div>
+                        <!-- visible wizard -->
+                        <field name="email_from"
+                            attrs="{'invisible':[('composition_mode', '!=', 'mass_mail')]}"/>
+                        <label for="partner_ids" string="Destinatarios"  attrs="{'invisible': [('is_log', '=', True)]}" groups="base.group_user"/>
+                        <div groups="base.group_user" attrs="{'invisible': [('is_log', '=', True)]}">
+                            <span attrs="{'invisible': [('composition_mode', '!=', 'mass_mail')]}">
+                                <strong>Envío masivo de correos electrónicos</strong> en
+                                <span attrs="{'invisible': [('use_active_domain', '=', True)]}">los registros seleccionados</span>
+                                <span attrs="{'invisible': [('use_active_domain', '=', False)]}">el filtro de búsqueda actual</span>.
+                            </span>
+                            <field
+                                name="notify_followers"
+                                attrs="{'invisible': [('composition_mode', '=', 'mass_mail')]}"
+                                invisible="1"
+                            />
+                            <span name="document_followers_text" attrs="{'invisible':['|', ('model', '=', False), ('composition_mode', '=', 'mass_mail')]}">Enviar a</span>
+                            <field name="partner_ids" widget="many2many_tags_email" string="Destinatarios" placeholder="Add contacts to notify..."
+                                context="{'force_email':True, 'show_email':True}"
+                                attrs="{'invisible': [('composition_mode', '!=', 'comment')]}"/>
+                            
+                        </div>
+                        <field name="subject" placeholder="Subject..." required="True"/>
+                        <!-- mass post -->
+                        <field name="notify"
+                            attrs="{'invisible':[('composition_mode', '!=', 'mass_post')]}"/>
+                        <!-- mass mailing -->
+                        <field name="no_auto_thread" attrs="{'invisible':[('composition_mode', '!=', 'mass_mail')]}"/>
+                        <field name="reply_to" placeholder="Email address to redirect replies..."
+                            attrs="{'invisible':['|', ('no_auto_thread', '=', False), ('composition_mode', '!=', 'mass_mail')],
+                                    'required':[('no_auto_thread', '=', True), ('composition_mode', '=', 'mass_mail')]}"/>
+                    </group>
+                    <field name="body" options="{'style-inline': true}"/>
+                    <group col="4">
+                        <field name="attachment_ids" widget="many2many_binary" string="Attach a file" nolabel="1" colspan="2"/>
+                        <field name="template_id" options="{'no_create': True}"
+                               context="{'default_model': model, 'default_body_html': body, 'default_subject': subject}"/>
+                    </group>
+                    <footer>
+                        <button string="Send" attrs="{'invisible': [('is_log', '=', True)]}" name="action_send_mail" type="object" class="btn-primary o_mail_send"/>
+                        <button string="Log" attrs="{'invisible': [('is_log', '=', False)]}" name="action_send_mail" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel" />
+
+                        <button icon="fa-lg fa-save" type="object" name="save_as_template" string="Save as new template"
+                                class="float-right btn-secondary" help="Save as a new template"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

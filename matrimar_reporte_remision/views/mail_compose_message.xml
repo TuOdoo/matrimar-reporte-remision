@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data >
+        <record id="mail_compose_message_form_inherits" model="ir.ui.view">
+            <field name="name">mail.compose.message.form.inherits</field>
+            <field name="model">mail.compose.message</field>
+            <field name="inherit_id" ref="mail.email_compose_message_wizard_form" />
+            <field name="arch"
+                type="xml">
+                <xpath expr="//field[@name='template_id']"
+                    position="after">
+                    <field name="stock_picking_ids" 
+                    invisible="1"
+                    />
+                    <field name="notify_followers" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
