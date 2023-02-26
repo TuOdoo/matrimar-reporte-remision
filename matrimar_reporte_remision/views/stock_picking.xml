@@ -12,9 +12,26 @@
                 <xpath expr="//field[@name='qty_done_rr']"
                     position="replace">
                     <field name="qty_done_rr" sum="Total"/>
+                    <field name="print_report_remision"/>
                 </xpath>
+                
             </field>
         </record>
+
+        <record id="stock_picking_view_tree_sum2"
+            model="ir.ui.view">
+            <field name="name">stock_picking_view_tree_sum2</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.vpicktree" />
+            <field name="arch"
+                type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="default_order">ticket_date desc</attribute>
+                </xpath>
+                
+            </field>
+        </record>
+
         <record id="stock_picking_action_server_send"
             model="ir.actions.server">
             <field name="name">Enviar por correo</field>

@@ -4,8 +4,16 @@ from odoo import fields, models, api, _
 from odoo.exceptions import UserError
 from werkzeug.urls import url_encode
 
+import io
+import xlwt
+import itertools
+from odoo.tools.misc import xlwt
+import base64
+
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
+
+    print_report_remision = fields.Char()
     
     def _get_share_url(self, redirect=False, signup_partner=False, pid=None, share_token=True):
         self.ensure_one()

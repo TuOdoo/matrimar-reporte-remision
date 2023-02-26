@@ -3,9 +3,14 @@ from odoo import models, fields, api
 from datetime import datetime, timedelta
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DATE_FORMAT
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DATETIME_FORMAT
-
+import pytz
+import logging
+import io
+import xlwt
+import itertools
 import base64
 import logging
+_logger = logging.getLogger('[ WIZARD SELECTOR FECHAS]')
 
 
 class MailComposeMessage(models.TransientModel):
@@ -31,6 +36,55 @@ class MailComposeMessage(models.TransientModel):
             'res_model': self._name,
             'res_id': self.id,
             'mimetype': 'application/pdf'
+        })
+    
+    def generate_excel_report(self):
+        workbook = xlwt.Workbook()
+        worksheet = workbook.add_sheet('Reporte remision')
+        style = xlwt.easyxf('font: bold True, name Arial;')
+        bold = xlwt.easyxf("font: bold on;")
+        worksheet.write(1, 1, str("Reporte remision"), bold)
+        print_report_remision = ''
+        for line in self.stock_picking_ids:
+            print_report_remision = line.print_report_remision
+
+        worksheet.write(2, 1, str(print_report_remision))
+        worksheet.write(3, 0, 'Referencia', bold)
+        worksheet.write(3, 1, 'Fecha ticket apex ', bold)
+        worksheet.write(3, 2, 'Tiro', bold)
+        worksheet.write(3, 3, 'Pedido', bold)
+        worksheet.write(3, 4, 'Producto', bold)
+        worksheet.write(3, 5, 'Cantidad', bold)
+        row = 4
+        ids = []
+        totals = 0
+        for line in self.stock_picking_ids:
+            print("-------------------------------")
+            worksheet.write(row, 0, line.name)
+            worksheet.write(row, 1, line.ticket_date)
+            worksheet.write(row, 2, line.partner_id.name)
+            worksheet.write(row, 3, line.origin)
+            worksheet.write(row, 4, line.product_id)
+            worksheet.write(row, 5, line.qty_done_rr)
+            row += 1
+            totals += line.qty_done_rr
+        row += 1
+        worksheet.write(row, 4, "Cantidad")
+        worksheet.write(row, 5, totals)
+        fp = io.BytesIO()
+        workbook.save(fp)
+        fp.seek(0)
+        data = fp.read()
+        b64_excel = base64.b64encode(data)
+        return self.env['ir.attachment'].create({
+            'name': 'Reporte remision.xls',
+            'type': 'binary',
+            'datas': b64_excel,
+            # 'datas_fname': name + '.pdf',
+            'store_fname': 'Reporte remision.xls',
+            'res_model': self._name,
+            'res_id': self.id,
+            'mimetype': 'application/vnd.ms-excel'
         })
 
     def datos_para_reporte(self):
@@ -59,6 +113,8 @@ class MailComposeMessage(models.TransientModel):
             adjunto = self.action_get_attachment(
                 pdf[0], name='Reporte_logistica.pdf')
             self.attachment_ids = adjunto
+            excel = self.generate_excel_report()
+            self.attachment_ids += excel
 
     stock_picking_ids = fields.Many2many('stock.picking')
 

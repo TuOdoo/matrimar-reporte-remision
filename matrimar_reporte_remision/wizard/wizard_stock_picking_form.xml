@@ -30,6 +30,12 @@
                             type="object"
                             class="oe_highlight" />
 
+                        <button string="EXCEL"
+                            name="generate_excel_report"
+                            type="object"
+                            class="oe_highlight" />
+                            
+
                         <button string="Cerrar"
                             name="cerrar"
                             type="object"
